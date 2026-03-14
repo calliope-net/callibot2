@@ -9,7 +9,8 @@
         "main.ts",
         "README.md",
         "callibot2.ts",
-        "enums.ts"
+        "enums.ts",
+        "sensoren.ts"
     ],
     "testFiles": [
         "test.ts"

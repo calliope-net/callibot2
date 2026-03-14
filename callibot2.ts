@@ -6,10 +6,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     const q_i2c_callibot_x22 = 0x22
     let q_i2c_callibot_connected: boolean // undefined
     let qLEDs = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
-    // interner Speicher für Sensoren
-    let input_Digital: number
-    let input_Ultraschallsensor: number
-    let input_Spursensoren: number[]
+
 
 
     //% group="Motor (-100% .. 0 .. +100%)"
@@ -136,17 +133,6 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
     }
 
-    // ========== group="INPUT digital"
-
-    //% group="INPUT digital"
-    //% block="Digitaleingänge neu einlesen" weight=8
-    export function read_inputs() {
-        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUTS]), 1)
-        if (bu)
-            input_Digital = bu[0]
-    }
-
-
 
     //% group="I²C 0x22" 
     //% block="Calli:bot 2 angeschlossen"
@@ -164,7 +150,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     }
 
 
-    function i2cWriteReadBuffer(bu: Buffer, size: number) {
+    export function i2cWriteReadBuffer(bu: Buffer, size: number) {
         let read_buffer: Buffer
         if (q_i2c_callibot_connected !== false) // undefined oder true
             if (pins.i2cWriteBuffer(q_i2c_callibot_x22, bu, true) == 0) {
