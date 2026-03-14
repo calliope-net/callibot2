@@ -66,13 +66,13 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 
 
     //% group="LED"
-    //% block="RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7
+    //% block="4 RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7
     //% color.shadow="callibot2_colorPicker"
     //% lv.shadow="toggleOnOff" lh.shadow="toggleOnOff" rh.shadow="toggleOnOff" rv.shadow="toggleOnOff"
     //% lv.defl=true lh.defl=true rh.defl=true rv.defl=true
     //% blink.shadow="toggleYesNo"
     //% inlineInputMode=inline expandableArgumentMode="toggle"
-    export function setRgbLed3(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
+    export function set_rgbled(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
         //basic.showString(lv.toString())
         let buffer = Buffer.create(5)
         buffer[0] = eRegister.SET_LED
@@ -81,21 +81,56 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
         buffer[3] = buffer[3] >>> 4
         buffer[4] = buffer[4] >>> 4
 
-        if (lv) setRgbLed31(eRgbLed.LV, buffer, blink)
-        if (lh) setRgbLed31(eRgbLed.LH, buffer, blink)
-        if (rh) setRgbLed31(eRgbLed.RH, buffer, blink)
-        if (rv) setRgbLed31(eRgbLed.RV, buffer, blink)
+        if (lv) set_rgbled1(eRgbLed.LV, buffer, blink)
+        if (lh) set_rgbled1(eRgbLed.LH, buffer, blink)
+        if (rh) set_rgbled1(eRgbLed.RH, buffer, blink)
+        if (rv) set_rgbled1(eRgbLed.RV, buffer, blink)
     }
 
 
     // blinken
-    function setRgbLed31(pRgbLed: eRgbLed, buffer: Buffer, blink: boolean) {
+    function set_rgbled1(pRgbLed: eRgbLed, buffer: Buffer, blink: boolean) {
         if (blink && qLEDs[pRgbLed] == buffer.getNumber(NumberFormat.UInt32BE, 1))
             buffer.setNumber(NumberFormat.UInt32BE, 1, 0) // alle Farben aus
         qLEDs[pRgbLed] = buffer.getNumber(NumberFormat.UInt32BE, 1)
         buffer[1] = pRgbLed // Led-Index 1,2,3,4 für RGB
         i2cWriteBuffer(buffer)
         basic.pause(10) // ms
+    }
+
+
+    //% group="LED"
+    //% block="LED %led %onoff || blinken %blink Helligkeit %pwm" weight=2
+    //% onoff.shadow="toggleOnOff"
+    //% blink.shadow="toggleYesNo"
+    //% pwm.min=1 pwm.max=16 pwm.defl=16
+    //% inlineInputMode=inline 
+    export function setLed1(pLed: eLed, on: boolean, blink = false, pwm?: number) {
+        if (!on)
+            pwm = 0 // LED aus schalten
+        else if (!between(pwm, 0, 16))
+            pwm = 16 // bei ungültigen Werten max. Helligkeit
+
+        if (pLed == eLed.redb) {
+            setLed1(eLed.redl, on, blink, pwm) // 2 mal rekursiv aufrufen für beide rote LED
+            setLed1(eLed.redr, on, blink, pwm)
+        }
+        else {
+            if (blink && qLEDs.get(pLed) == pwm)
+                pwm = 0
+            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_LED, pLed, pwm]))
+            qLEDs.set(pLed, pwm)
+        }
+    }
+
+
+
+    // ========== group="Reset"
+
+    //% group="Reset"
+    //% block="alles aus (Motoren, LEDs)"
+    export function i2cRESET_OUTPUTS() {
+        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
     }
 
 
