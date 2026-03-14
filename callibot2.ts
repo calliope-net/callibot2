@@ -77,7 +77,10 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
              i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm])) */
     }
 
-    //% group="Motor (0 .. 128 .. 255)" advanced=true
+
+    // ========== group="Motoren (0 .. 128 .. 255)" advanced=true
+
+    //% group="Motoren (0 .. 128 .. 255)" advanced=true
     //% block="Motor %eMotor %pwm %richtung" weight=3
     //% pwm.min=0 pwm.max=255 pwm.defl=128
     //% inlineInputMode=inline
@@ -102,7 +105,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
             write_motoren(0, eDirection.v, 0, eDirection.v)
     }
 
-    //% group="Motor (0 .. 128 .. 255)" advanced=true
+    //% group="Motoren (0 .. 128 .. 255)" advanced=true
     //% block="Motoren links %pwm1 %richtung1 rechts %pwm2 %richtung2" weight=2
     //% pwm1.min=0 pwm1.max=255 pwm1.defl=128 pwm2.min=0 pwm2.max=255 pwm2.defl=128
     //% inlineInputMode=inline
@@ -117,7 +120,6 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
             } //else { }
         } else // falscher Parameter -> beide Stop
             write_motoren(0, eDirection.v, 0, eDirection.v)
-        // i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, 0, 0, 0, 0]))
     }
 
 
@@ -131,7 +133,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     //% lv.defl=true lh.defl=true rh.defl=true rv.defl=true
     //% blink.shadow="toggleYesNo"
     //% inlineInputMode=inline expandableArgumentMode="toggle"
-    export function set_rgbled(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
+    export function write_rgbled(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
         //basic.showString(lv.toString())
         let buffer = Buffer.create(5)
         buffer[0] = eRegister.SET_LED
@@ -140,54 +142,64 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
         buffer[3] = buffer[3] >>> 4
         buffer[4] = buffer[4] >>> 4
 
-        if (lv) set_rgbled1(eRgbLed.LV, buffer, blink)
-        if (lh) set_rgbled1(eRgbLed.LH, buffer, blink)
-        if (rh) set_rgbled1(eRgbLed.RH, buffer, blink)
-        if (rv) set_rgbled1(eRgbLed.RV, buffer, blink)
+        if (lv) write_rgbled1(eRgbLed.LV, buffer, blink)
+        if (lh) write_rgbled1(eRgbLed.LH, buffer, blink)
+        if (rh) write_rgbled1(eRgbLed.RH, buffer, blink)
+        if (rv) write_rgbled1(eRgbLed.RV, buffer, blink)
     }
 
 
     // blinken
-    function set_rgbled1(pRgbLed: eRgbLed, buffer: Buffer, blink: boolean) {
-        if (blink && q_leds[pRgbLed] == buffer.getNumber(NumberFormat.UInt32BE, 1))
+    function write_rgbled1(rgbled: eRgbLed, buffer: Buffer, blink: boolean) {
+        if (blink && q_leds[rgbled] == buffer.getNumber(NumberFormat.UInt32BE, 1))
             buffer.setNumber(NumberFormat.UInt32BE, 1, 0) // alle Farben aus
-        q_leds[pRgbLed] = buffer.getNumber(NumberFormat.UInt32BE, 1)
-        buffer[1] = pRgbLed // Led-Index 1,2,3,4 für RGB
+        q_leds[rgbled] = buffer.getNumber(NumberFormat.UInt32BE, 1)
+        buffer[1] = rgbled // Led-Index 1,2,3,4 für RGB
         i2cWriteBuffer(buffer)
         basic.pause(10) // ms
     }
 
 
     //% group="LED"
-    //% block="LED %led %onoff || blinken %blink Helligkeit %pwm" weight=2
-    //% onoff.shadow="toggleOnOff"
+    //% block="LED %led %on || blinken %blink Helligkeit %pwm" weight=2
+    //% on.shadow="toggleOnOff"
     //% blink.shadow="toggleYesNo"
     //% pwm.min=1 pwm.max=16 pwm.defl=16
     //% inlineInputMode=inline 
-    export function setLed1(pLed: eLed, on: boolean, blink = false, pwm?: number) {
+    export function write_led(led: eLed, on: boolean, blink = false, pwm?: number) {
         if (!on)
             pwm = 0 // LED aus schalten
         else if (!between(pwm, 0, 16))
             pwm = 16 // bei ungültigen Werten max. Helligkeit
 
-        if (pLed == eLed.redb) {
-            setLed1(eLed.redl, on, blink, pwm) // 2 mal rekursiv aufrufen für beide rote LED
-            setLed1(eLed.redr, on, blink, pwm)
+        if (led == eLed.redb) {
+            write_led(eLed.redl, on, blink, pwm) // 2 mal rekursiv aufrufen für beide rote LED
+            write_led(eLed.redr, on, blink, pwm)
         }
         else {
-            if (blink && q_leds.get(pLed) == pwm)
+            if (blink && q_leds.get(led) == pwm)
                 pwm = 0
-            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_LED, pLed, pwm]))
-            q_leds.set(pLed, pwm)
+            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_LED, led, pwm]))
+            q_leds.set(led, pwm)
         }
     }
 
+
+
+    // ========== group="Kommentar"
+
+    //% group="Kommentar"
+    //% block="// %text"
+    export function comment(text: string): void { }
+
+
+
+    // ========== private
 
     export function i2cWriteBuffer(bu: Buffer) {
         if (q_i2c_callibot_connected !== false) // undefined oder true
             q_i2c_callibot_connected = pins.i2cWriteBuffer(q_i2c_callibot_x22, bu) == 0
     }
-
 
     export function i2cWriteReadBuffer(bu: Buffer, size: number) {
         let read_buffer: Buffer
@@ -200,7 +212,6 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
                 q_i2c_callibot_connected = false
         return read_buffer
     }
-
 
 
     export function between(i0: number, i1: number, i2: number): boolean { return (i0 >= i1 && i0 <= i2) }

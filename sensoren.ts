@@ -6,7 +6,9 @@ namespace callibot2 // sensoren.ts
     //let input_Ultraschallsensor: number = 0
     // let input_Spursensoren: number[] / analog
 
-    // ========== group="INPUT digital"
+
+
+    // ========== group="INPUT digital" subcategory="Sensoren"
 
     //% group="INPUT digital" subcategory="Sensoren"
     //% block="Digitaleingänge neu einlesen" weight=8
@@ -15,6 +17,22 @@ namespace callibot2 // sensoren.ts
         if (bu)
             input_Digital = bu[0]
     }
+
+    //% group="INPUT digital" subcategory="Sensoren"
+    //% block="%inputs" weight=3
+    export function get_inputs(inputs: eINPUTS): boolean {
+        switch (inputs) {
+            case eINPUTS.sp1r: return (input_Digital & 0b00000001) == 1
+            case eINPUTS.sp2l: return (input_Digital & 0b00000010) == 2
+            case eINPUTS.st1r: return (input_Digital & 0b00000100) == 4
+            case eINPUTS.st2l: return (input_Digital & 0b00001000) == 8
+            case eINPUTS.ont: return (input_Digital & 0b00010000) == 16
+            case eINPUTS.off: return (input_Digital & 0b00100000) == 32
+            default: return false
+        }
+    }
+
+    // ========== group="INPUT digital" subcategory="Sensoren" deprecated=true
 
     //% group="INPUT digital" subcategory="Sensoren" deprecated=true
     //% block="Spur Sensor %sensor %status" weight=7
@@ -35,31 +53,22 @@ namespace callibot2 // sensoren.ts
         }
     }
 
-    //% group="INPUT digital" subcategory="Sensoren"
-    //% block="%inputs" weight=3
-    export function get_inputs(inputs: eINPUTS): boolean {
-        switch (inputs) {
-            //case eINPUTS.sp0: return (input_Digital & 0b00000011) == 0
-            case eINPUTS.sp1r: return (input_Digital & 0b00000001) == 1
-            case eINPUTS.sp2l: return (input_Digital & 0b00000010) == 2
-            //case eINPUTS.sp3b: return (input_Digital & 0b00000011) == 3
-            //case eINPUTS.sp4e: return bitINPUTS(eINPUTS.sp1r) || bitINPUTS(eINPUTS.sp2l) || bitINPUTS(eINPUTS.sp3b)
-            //case eINPUTS.st0: return (input_Digital & 0b00001100) == 0b00000000
-            case eINPUTS.st1r: return (input_Digital & 0b00000100) == 4
-            case eINPUTS.st2l: return (input_Digital & 0b00001000) == 8
-            //case eINPUTS.st3b: return (input_Digital & 0b00001100) == 0b00001100
-            //case eINPUTS.st4e: return bitINPUTS(eINPUTS.st1r) || bitINPUTS(eINPUTS.st2l) || bitINPUTS(eINPUTS.st3b)
-            case eINPUTS.ont: return (input_Digital & 0b00010000) == 16
-            case eINPUTS.off: return (input_Digital & 0b00100000) == 32
+
+
+    // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
+
+    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
+    //% block="Entfernung %vergleich %cm cm" weight=4
+    //% cm.min=1 cm.max=50 cm.defl=15
+    export function read_compare_us(vergleich: eVergleich, cm: number) {
+        switch (vergleich) {
+            case eVergleich.gt: return read_us() / 10 > cm
+            case eVergleich.lt: return read_us() / 10 < cm
             default: return false
         }
     }
 
-
-
-
-
-    // ========== group="INPUT Ultraschallsensor"
+    // ========== group="INPUT Ultraschallsensor" advanced=true
 
     //% group="INPUT Ultraschallsensor" advanced=true
     //% block="Ultraschallsensor 16 Bit (mm)" weight=3
@@ -71,24 +80,13 @@ namespace callibot2 // sensoren.ts
             return 0
     }
 
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Entfernung %vergleich %cm cm" weight=2
-    //% cm.min=1 cm.max=50 cm.defl=15
-    export function read_compare_us(vergleich: eVergleich, cm: number) {
-        switch (vergleich) {
-            case eVergleich.gt: return read_us() / 10 > cm
-            case eVergleich.lt: return read_us() / 10 < cm
-            default: return false
-        }
-    }
 
 
+    // ========== group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
 
-
-
-    //% group="Encoder 2*32 Bit [l,r]" subcategory="Sensoren"
-    //% block="Encoder Werte lesen 2*32 Bit [l,r]"
-    export function encoderValue(): number[] {
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder Array 2*32 Bit [l,r]" weight=6
+    export function encoder_value(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
         if (bu)
             return bu.slice(1, 8).toArray(NumberFormat.Int32LE)
@@ -96,11 +94,49 @@ namespace callibot2 // sensoren.ts
             return [0, 0]
     }
 
-    //% group="Encoder 2*32 Bit [l,r]" subcategory="Sensoren"
-    //% block="Encoder Zähler löschen %encoder"
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder Zähler löschen %encoder" weight=4
     //% encoder.defl=callibot2.eMotor.beide
-    export function resetEncoder(encoder: eMotor) {
+    export function encoder_reset(encoder: eMotor) {
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
     }
+
+
+
+    // ========== group="I²C Register lesen" advanced=true
+
+    //% group="I²C Register lesen" advanced=true
+    //% block="Version %version (HEX)" weight=6
+    export function i2c_read_fw(version: eVersion) {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
+        if (bu)
+            switch (version) {
+                case eVersion.Typ: { return bu.slice(1, 1).toHex() }
+                case eVersion.Firmware: { return bu.slice(2, 4).toHex() }
+                case eVersion.Seriennummer: { return bu.slice(6, 4).toHex() }
+                default: { return bu.toHex() }
+            }
+        else
+            return 0
+    }
+
+    //% group="I²C Register lesen" advanced=true
+    //% block="Versorgungsspannung (mV)" weight=4
+    export function i2c_read_power(): number {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
+        if (bu)
+            return bu.getNumber(NumberFormat.UInt16LE, 1)
+        else
+            return 0
+    }
+
+    //% group="I²C Register lesen" advanced=true
+    //% block="I²C Register lesen %register size %size (Buffer)" weight=2
+    //% register.defl=callibot2.eRegister.GET_INPUTS
+    //% size.min=1 size.max=10 size.defl=1
+    export function i2c_read_register(register: eRegister, size: number): Buffer {
+        return i2cWriteReadBuffer(Buffer.fromArray([register]), size)
+    }
+
 
 } // sensoren.ts
