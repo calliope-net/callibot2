@@ -5,11 +5,37 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 */ {
     const q_i2c_callibot_x22 = 0x22
     let q_i2c_callibot_connected: boolean // undefined
-    let qLEDs = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
+    let q_leds = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
+
+    let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
+    let q_pwm1 = 0
+    let q_richtung2 = eDirection.v // 2 rechter Motor
+    let q_pwm2 = 0
+
+
+    // ========== group="I²C 0x22" 
+
+    //% group="I²C 0x22" 
+    //% block="Calli:bot 2 angeschlossen" weight=3
+    export function is_connected() {
+        if (q_i2c_callibot_connected)
+            return true
+        else if (q_i2c_callibot_connected === undefined) // nicht false
+            read_inputs() // testet i2cWriteReadBuffer
+        return q_i2c_callibot_connected
+    }
+
+    //% group="I²C 0x22" 
+    //% block="Reset (alles aus: Motoren, LEDs)" weight=1
+    export function reset_outputs() {
+        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
+    }
 
 
 
-    //% group="Motor (-100% .. 0 .. +100%)"
+    // ========== group="Motoren (-100% .. 0 .. +100%)"
+
+    //% group="Motoren (-100% .. 0 .. +100%)"
     //% block="Motoren links mit %pwm1 \\% rechts mit %pwm2 \\%" weight=8
     //% pwm1.shadow="speedPicker" pwm1.defl=0
     //% pwm2.shadow="speedPicker" pwm2.defl=0
@@ -19,10 +45,10 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
         pwm1 = Math.trunc(Math.abs(pwm1) * 255 / 100)
         pwm2 = Math.trunc(Math.abs(pwm2) * 255 / 100)
 
-        setMotoren(pwm1, richtung1, pwm2, richtung2)
+        write_motoren(pwm1, richtung1, pwm2, richtung2)
     }
 
-    //% group="Motor (-100% .. 0 .. +100%)"
+    //% group="Motoren (-100% .. 0 .. +100%)"
     //% block="Motor %pMotor mit %pwm \\%" weight=7
     //% pwm.shadow="speedPicker" pwm.defl=0
     export function setMotor(pMotor: eMotor, pwm: number) {
@@ -47,14 +73,21 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 
 
     //% group="Motor (0 .. 255)" subcategory="Fernsteuerung"
-    //% block="Motoren links %pPWM1 (0-255) %pRichtung1 rechts %pPWM2 %pRichtung2" weight=2
+    //% block="Motoren links %pwm1 (0-255) %richtung1 rechts %pwm2 %richtung2" weight=2
     //% pwm1.min=0 pwm1.max=255 pwm1.defl=128 pwm2.min=0 pwm2.max=255 pwm2.defl=128
     //% inlineInputMode=inline
-    export function setMotoren(pwm1: number, pRichtung1: eDirection, pwm2: number, pRichtung2: eDirection) {
-        if (between(pwm1, 0, 255) && between(pwm2, 0, 255))
-            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, pRichtung1, pwm1, pRichtung2, pwm2]))
-        else // falscher Parameter -> beide Stop
-            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, 0, 0, 0, 0]))
+    export function write_motoren(pwm1: number, richtung1: eDirection, pwm2: number, richtung2: eDirection) {
+        if (between(pwm1, 0, 255) && between(pwm2, 0, 255)) {
+            if (q_richtung1 != richtung1 || q_pwm1 != pwm1 || q_richtung2 != richtung2 || q_pwm2 != pwm2) {
+                q_richtung1 = richtung1
+                q_pwm1 = pwm1
+                q_richtung2 = richtung2
+                q_pwm2 = pwm2
+                i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, richtung1, pwm1, richtung2, pwm2]))
+            } //else { }
+        } else // falscher Parameter -> beide Stop
+            write_motoren(0, eDirection.v, 0, eDirection.v)
+        // i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, 0, 0, 0, 0]))
     }
 
 
@@ -90,9 +123,9 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 
     // blinken
     function set_rgbled1(pRgbLed: eRgbLed, buffer: Buffer, blink: boolean) {
-        if (blink && qLEDs[pRgbLed] == buffer.getNumber(NumberFormat.UInt32BE, 1))
+        if (blink && q_leds[pRgbLed] == buffer.getNumber(NumberFormat.UInt32BE, 1))
             buffer.setNumber(NumberFormat.UInt32BE, 1, 0) // alle Farben aus
-        qLEDs[pRgbLed] = buffer.getNumber(NumberFormat.UInt32BE, 1)
+        q_leds[pRgbLed] = buffer.getNumber(NumberFormat.UInt32BE, 1)
         buffer[1] = pRgbLed // Led-Index 1,2,3,4 für RGB
         i2cWriteBuffer(buffer)
         basic.pause(10) // ms
@@ -116,33 +149,13 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
             setLed1(eLed.redr, on, blink, pwm)
         }
         else {
-            if (blink && qLEDs.get(pLed) == pwm)
+            if (blink && q_leds.get(pLed) == pwm)
                 pwm = 0
             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_LED, pLed, pwm]))
-            qLEDs.set(pLed, pwm)
+            q_leds.set(pLed, pwm)
         }
     }
 
-
-
-    // ========== group="Reset"
-
-    //% group="Reset"
-    //% block="alles aus (Motoren, LEDs)"
-    export function i2cRESET_OUTPUTS() {
-        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
-    }
-
-
-    //% group="I²C 0x22" 
-    //% block="Calli:bot 2 angeschlossen"
-    export function is_connected() {
-        if (q_i2c_callibot_connected)
-            return true
-        else if (q_i2c_callibot_connected === undefined) // nicht false
-            read_inputs() // testet i2cWriteReadBuffer
-        return q_i2c_callibot_connected
-    }
 
     export function i2cWriteBuffer(bu: Buffer) {
         if (q_i2c_callibot_connected !== false) // undefined oder true
