@@ -5,7 +5,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 */ {
     const q_i2c_callibot_x22 = 0x22
     let q_i2c_callibot_connected: boolean // undefined
-
+    let qLEDs = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
 
 
 
@@ -57,6 +57,46 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, 0, 0, 0, 0]))
     }
 
+
+
+
+
+    // ========== group="LED"
+
+
+
+    //% group="LED"
+    //% block="RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7
+    //% color.shadow="callibot2_colorPicker"
+    //% lv.shadow="toggleOnOff" lh.shadow="toggleOnOff" rh.shadow="toggleOnOff" rv.shadow="toggleOnOff"
+    //% lv.defl=true lh.defl=true rh.defl=true rv.defl=true
+    //% blink.shadow="toggleYesNo"
+    //% inlineInputMode=inline expandableArgumentMode="toggle"
+    export function setRgbLed3(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
+        //basic.showString(lv.toString())
+        let buffer = Buffer.create(5)
+        buffer[0] = eRegister.SET_LED
+        buffer.setNumber(NumberFormat.UInt32BE, 1, color) // [1]=0 [2]=r [3]=g [4]=b
+        buffer[2] = buffer[2] >>> 4 // durch 16, gültige rgb Werte für callibot: 0-15
+        buffer[3] = buffer[3] >>> 4
+        buffer[4] = buffer[4] >>> 4
+
+        if (lv) setRgbLed31(eRgbLed.LV, buffer, blink)
+        if (lh) setRgbLed31(eRgbLed.LH, buffer, blink)
+        if (rh) setRgbLed31(eRgbLed.RH, buffer, blink)
+        if (rv) setRgbLed31(eRgbLed.RV, buffer, blink)
+    }
+
+
+    // blinken
+    function setRgbLed31(pRgbLed: eRgbLed, buffer: Buffer, blink: boolean) {
+        if (blink && qLEDs[pRgbLed] == buffer.getNumber(NumberFormat.UInt32BE, 1))
+            buffer.setNumber(NumberFormat.UInt32BE, 1, 0) // alle Farben aus
+        qLEDs[pRgbLed] = buffer.getNumber(NumberFormat.UInt32BE, 1)
+        buffer[1] = pRgbLed // Led-Index 1,2,3,4 für RGB
+        i2cWriteBuffer(buffer)
+        basic.pause(10) // ms
+    }
 
 
 
