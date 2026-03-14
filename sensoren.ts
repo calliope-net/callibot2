@@ -56,4 +56,51 @@ namespace callibot2 // sensoren.ts
     }
 
 
+
+
+
+    // ========== group="INPUT Ultraschallsensor"
+
+    //% group="INPUT Ultraschallsensor"
+    //% block="Ultraschallsensor neu einlesen" weight=3
+    export function read_us() {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUT_US]), 3)
+        if (bu)
+            input_Ultraschallsensor = bu.getNumber(NumberFormat.UInt16LE, 1)
+    }
+
+    //% group="INPUT Ultraschallsensor"
+    //% block="Entfernung %pVergleich %cm cm" weight=2
+    //% cm.min=1 cm.max=50 cm.defl=15
+    export function vergleich_us(pVergleich: eVergleich, cm: number) {
+        switch (pVergleich) {
+            case eVergleich.gt: return input_Ultraschallsensor / 10 > cm
+            case eVergleich.lt: return input_Ultraschallsensor / 10 < cm
+            default: return false
+        }
+    }
+
+
+    //% group="INPUT Ultraschallsensor"
+    //% block="Ultraschallsensor 16 Bit (mm)" weight=1
+    export function get_us() { return input_Ultraschallsensor }
+
+
+    //% group="Encoder 2*32 Bit [l,r]"
+    //% block="Encoder Werte lesen 2*32 Bit [l,r]"
+    export function encoderValue(): number[] {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
+        if (bu)
+            return bu.slice(1, 8).toArray(NumberFormat.Int32LE)
+        else
+            return [0, 0]
+    }
+
+    //% group="Encoder 2*32 Bit [l,r]"
+    //% block="Encoder Zähler löschen %encoder"
+    //% encoder.defl=callibot2.eMotor.beide
+    export function resetEncoder(encoder: eMotor) {
+        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
+    }
+
 } // sensoren.ts

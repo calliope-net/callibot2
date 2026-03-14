@@ -144,7 +144,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
         return q_i2c_callibot_connected
     }
 
-    function i2cWriteBuffer(bu: Buffer) {
+    export function i2cWriteBuffer(bu: Buffer) {
         if (q_i2c_callibot_connected !== false) // undefined oder true
             q_i2c_callibot_connected = pins.i2cWriteBuffer(q_i2c_callibot_x22, bu) == 0
     }
