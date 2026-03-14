@@ -2,8 +2,8 @@
 namespace callibot2 // sensoren.ts
 {
     // interner Speicher für Sensoren
-    let input_Digital: number=0
-    let input_Ultraschallsensor: number=0
+    let input_Digital: number = 0
+    let input_Ultraschallsensor: number = 0
     // let input_Spursensoren: number[] / analog
 
     // ========== group="INPUT digital"
@@ -37,7 +37,7 @@ namespace callibot2 // sensoren.ts
 
     //% group="INPUT digital"
     //% block="%pINPUTS" weight=3
-    export function  bitINPUTS(pINPUTS: eINPUTS): boolean {
+    export function get_inputs(pINPUTS: eINPUTS): boolean {
         switch (pINPUTS) {
             //case eINPUTS.sp0: return (input_Digital & 0b00000011) == 0
             case eINPUTS.sp1r: return (input_Digital & 0b00000001) == 1
