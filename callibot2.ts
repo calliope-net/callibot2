@@ -16,7 +16,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     // ========== group="I²C 0x22" 
 
     //% group="I²C 0x22" 
-    //% block="Calli:bot 2 angeschlossen" weight=3
+    //% block="Calli:bot 2 angeschlossen ?" weight=3
     export function is_connected() {
         if (q_i2c_callibot_connected)
             return true
@@ -36,14 +36,14 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     // ========== group="Motoren (-100% .. 0 .. +100%)"
 
     //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="Motoren links mit %pwm1 \\% rechts mit %pwm2 \\%" weight=8
-    //% pwm1.shadow="speedPicker" pwm1.defl=0
-    //% pwm2.shadow="speedPicker" pwm2.defl=0
+    //% block="Motoren links %prozent1 \\% rechts %prozent2 \\%" weight=8
+    //% prozent1.shadow="speedPicker" prozent1.defl=0
+    //% prozent2.shadow="speedPicker" prozent2.defl=0
     export function write_motoren_prozent(prozent1: number, prozent2: number) {
-      /*   let richtung1 = (prozent1 < 0 ? eDirection.r : eDirection.v)
-        let richtung2 = (prozent2 < 0 ? eDirection.r : eDirection.v)
-        prozent1 = Math.trunc(Math.abs(prozent1) * 255 / 100)
-        prozent2 = Math.trunc(Math.abs(prozent2) * 255 / 100) */
+        /*   let richtung1 = (prozent1 < 0 ? eDirection.r : eDirection.v)
+          let richtung2 = (prozent2 < 0 ? eDirection.r : eDirection.v)
+          prozent1 = Math.trunc(Math.abs(prozent1) * 255 / 100)
+          prozent2 = Math.trunc(Math.abs(prozent2) * 255 / 100) */
 
         write_motoren(
             Math.trunc(Math.abs(prozent1) * 255 / 100),
@@ -54,7 +54,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     }
 
     //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="Motor %motor mit %prozent \\%" weight=7
+    //% block="Motor %motor %prozent \\%" weight=7
     //% prozent.shadow="speedPicker" prozent.defl=0
     export function write_motor_prozent(motor: eMotor, prozent: number) {
         /*  let richtung = (pwm < 0 ? eDirection.r : eDirection.v)
@@ -77,33 +77,33 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
              i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm])) */
     }
 
-
+    //% group="Motor (0 .. 128 .. 255)" advanced=true
+    //% block="Motor %eMotor %pwm %richtung" weight=3
+    //% pwm.min=0 pwm.max=255 pwm.defl=128
+    //% inlineInputMode=inline
     export function write_motor(motor: eMotor, pwm: number, richtung: eDirection) {
         if (between(pwm, 0, 255)) {
-            if (motor == eMotor.m1) {
+            if (motor == eMotor.m1) { // 1 linker Motor
                 if (q_richtung1 != richtung || q_pwm1 != pwm) {
                     q_richtung1 = richtung
                     q_pwm1 = pwm
                     i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, motor, richtung, pwm]))
                 }
-            } else if (motor == eMotor.m2) {
+            } else if (motor == eMotor.m2) { // 2 rechter Motor
                 if (q_richtung2 != richtung || q_pwm2 != pwm) {
                     q_richtung2 = richtung
                     q_pwm2 = pwm
                     i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, motor, richtung, pwm]))
                 }
-            } else { // beide
+            } else { // beide Motoren
                 write_motoren(pwm, richtung, pwm, richtung)
             }
         } else // falscher Parameter -> beide Stop
             write_motoren(0, eDirection.v, 0, eDirection.v)
     }
 
-
-
-
-    //% group="Motor (0 .. 255)" subcategory="Fernsteuerung"
-    //% block="Motoren links %pwm1 (0-255) %richtung1 rechts %pwm2 %richtung2" weight=2
+    //% group="Motor (0 .. 128 .. 255)" advanced=true
+    //% block="Motoren links %pwm1 %richtung1 rechts %pwm2 %richtung2" weight=2
     //% pwm1.min=0 pwm1.max=255 pwm1.defl=128 pwm2.min=0 pwm2.max=255 pwm2.defl=128
     //% inlineInputMode=inline
     export function write_motoren(pwm1: number, richtung1: eDirection, pwm2: number, richtung2: eDirection) {
@@ -122,11 +122,7 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 
 
 
-
-
     // ========== group="LED"
-
-
 
     //% group="LED"
     //% block="4 RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7

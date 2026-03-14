@@ -3,7 +3,7 @@ namespace callibot2 // sensoren.ts
 {
     // interner Speicher für Sensoren
     let input_Digital: number = 0
-    let input_Ultraschallsensor: number = 0
+    //let input_Ultraschallsensor: number = 0
     // let input_Spursensoren: number[] / analog
 
     // ========== group="INPUT digital"
@@ -16,7 +16,7 @@ namespace callibot2 // sensoren.ts
             input_Digital = bu[0]
     }
 
-    //% group="INPUT digital" subcategory="Sensoren"
+    //% group="INPUT digital" subcategory="Sensoren" deprecated=true
     //% block="Spur Sensor %sensor %status" weight=7
     export function get_spursensor(sensor: eSensor, status: eSensorStatus): boolean {
         switch (sensor) {
@@ -36,9 +36,9 @@ namespace callibot2 // sensoren.ts
     }
 
     //% group="INPUT digital" subcategory="Sensoren"
-    //% block="%pINPUTS" weight=3
-    export function get_inputs(pINPUTS: eINPUTS): boolean {
-        switch (pINPUTS) {
+    //% block="%inputs" weight=3
+    export function get_inputs(inputs: eINPUTS): boolean {
+        switch (inputs) {
             //case eINPUTS.sp0: return (input_Digital & 0b00000011) == 0
             case eINPUTS.sp1r: return (input_Digital & 0b00000001) == 1
             case eINPUTS.sp2l: return (input_Digital & 0b00000010) == 2
@@ -61,29 +61,29 @@ namespace callibot2 // sensoren.ts
 
     // ========== group="INPUT Ultraschallsensor"
 
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Ultraschallsensor neu einlesen" weight=3
+    //% group="INPUT Ultraschallsensor" advanced=true
+    //% block="Ultraschallsensor 16 Bit (mm)" weight=3
     export function read_us() {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUT_US]), 3)
         if (bu)
-            input_Ultraschallsensor = bu.getNumber(NumberFormat.UInt16LE, 1)
+            return bu.getNumber(NumberFormat.UInt16LE, 1)
+        else
+            return 0
     }
 
     //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Entfernung %pVergleich %cm cm" weight=2
+    //% block="Entfernung %vergleich %cm cm" weight=2
     //% cm.min=1 cm.max=50 cm.defl=15
-    export function vergleich_us(pVergleich: eVergleich, cm: number) {
-        switch (pVergleich) {
-            case eVergleich.gt: return input_Ultraschallsensor / 10 > cm
-            case eVergleich.lt: return input_Ultraschallsensor / 10 < cm
+    export function read_compare_us(vergleich: eVergleich, cm: number) {
+        switch (vergleich) {
+            case eVergleich.gt: return read_us() / 10 > cm
+            case eVergleich.lt: return read_us() / 10 < cm
             default: return false
         }
     }
 
 
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Ultraschallsensor 16 Bit (mm)" weight=1
-    export function get_us() { return input_Ultraschallsensor }
+
 
 
     //% group="Encoder 2*32 Bit [l,r]" subcategory="Sensoren"
