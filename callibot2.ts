@@ -39,35 +39,65 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     //% block="Motoren links mit %pwm1 \\% rechts mit %pwm2 \\%" weight=8
     //% pwm1.shadow="speedPicker" pwm1.defl=0
     //% pwm2.shadow="speedPicker" pwm2.defl=0
-    export function setMotoren2(pwm1: number, pwm2: number) {
-        let richtung1 = (pwm1 < 0 ? eDirection.r : eDirection.v)
-        let richtung2 = (pwm2 < 0 ? eDirection.r : eDirection.v)
-        pwm1 = Math.trunc(Math.abs(pwm1) * 255 / 100)
-        pwm2 = Math.trunc(Math.abs(pwm2) * 255 / 100)
+    export function write_motoren_prozent(prozent1: number, prozent2: number) {
+      /*   let richtung1 = (prozent1 < 0 ? eDirection.r : eDirection.v)
+        let richtung2 = (prozent2 < 0 ? eDirection.r : eDirection.v)
+        prozent1 = Math.trunc(Math.abs(prozent1) * 255 / 100)
+        prozent2 = Math.trunc(Math.abs(prozent2) * 255 / 100) */
 
-        write_motoren(pwm1, richtung1, pwm2, richtung2)
+        write_motoren(
+            Math.trunc(Math.abs(prozent1) * 255 / 100),
+            (prozent1 < 0 ? eDirection.r : eDirection.v),
+            Math.trunc(Math.abs(prozent2) * 255 / 100),
+            (prozent2 < 0 ? eDirection.r : eDirection.v)
+        )
     }
 
     //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="Motor %pMotor mit %pwm \\%" weight=7
-    //% pwm.shadow="speedPicker" pwm.defl=0
-    export function setMotor(pMotor: eMotor, pwm: number) {
-        let richtung = (pwm < 0 ? eDirection.r : eDirection.v)
-        pwm = Math.trunc(Math.abs(pwm) * 255 / 100)
+    //% block="Motor %motor mit %prozent \\%" weight=7
+    //% prozent.shadow="speedPicker" prozent.defl=0
+    export function write_motor_prozent(motor: eMotor, prozent: number) {
+        /*  let richtung = (pwm < 0 ? eDirection.r : eDirection.v)
+         pwm = Math.trunc(Math.abs(pwm) * 255 / 100) */
 
-        if (!between(pwm, 0, 255)) { // falscher Parameter -> beide Stop
-            pMotor = eMotor.beide
-            pwm = 0
-        }
+        write_motor(
+            motor,
+            Math.trunc(Math.abs(prozent) * 255 / 100),
+            (prozent < 0 ? eDirection.r : eDirection.v)
+        )
 
-        if (pMotor == eMotor.beide)
-            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm, richtung, pwm]))
-        else
-            i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm]))
+        /*  if (!between(pwm, 0, 255)) { // falscher Parameter -> beide Stop
+             pMotor = eMotor.beide
+             pwm = 0
+         }
+ 
+         if (pMotor == eMotor.beide)
+             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm, richtung, pwm]))
+         else
+             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm])) */
     }
 
 
-
+    export function write_motor(motor: eMotor, pwm: number, richtung: eDirection) {
+        if (between(pwm, 0, 255)) {
+            if (motor == eMotor.m1) {
+                if (q_richtung1 != richtung || q_pwm1 != pwm) {
+                    q_richtung1 = richtung
+                    q_pwm1 = pwm
+                    i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, motor, richtung, pwm]))
+                }
+            } else if (motor == eMotor.m2) {
+                if (q_richtung2 != richtung || q_pwm2 != pwm) {
+                    q_richtung2 = richtung
+                    q_pwm2 = pwm
+                    i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, motor, richtung, pwm]))
+                }
+            } else { // beide
+                write_motoren(pwm, richtung, pwm, richtung)
+            }
+        } else // falscher Parameter -> beide Stop
+            write_motoren(0, eDirection.v, 0, eDirection.v)
+    }
 
 
 
