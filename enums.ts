@@ -88,25 +88,25 @@ PWM rechts (0..255) von Motor 2
 
     export enum eINPUTS {
         //% block="Spursucher dunkel" deprecated=true
-        sp0, //= 0b00000000,
+        sp0_, //= 0b00000000,
         //% block="Spursucher rechts"
         sp1r, //= 0b00000001,
         //% block="Spursucher links"
         sp2l, //= 0b00000010,
         //% block="Spursucher beide"
-        sp3b, //= 0b00000011,
+        sp3b_, //= 0b00000011,
         //% block="Spursucher egal"
-        sp4e,
+        sp4e_,
         //% block="Stoßstange aus"
-        st0, //= 0b00000000,
+        st0_, //= 0b00000000,
         //% block="Stoßstange rechts"
         st1r, //= 0b00000100,
         //% block="Stoßstange links"
         st2l, //= 0b00001000,
         //% block="Stoßstange beide"
-        st3b, //= 0b00001100,
+        st3b_, //= 0b00001100,
         //% block="Stoßstange egal"
-        st4e,
+        st4e_,
         //% block="ON-Taster"
         ont, //= 0b00010000,
         //% block="OFF-Taster"
