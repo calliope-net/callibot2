@@ -42,10 +42,12 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUTS]), 1)
         if (bu)
             input_Digital = bu[0]
+        else
+            input_Digital = 0
     }
 
     //% group="INPUT digital" subcategory="Sensoren"
-    //% block="%inputs" weight=3
+    //% block="%inputs" weight=7
     export function get_inputs(inputs: eINPUTS): boolean {
         switch (inputs) {
             case eINPUTS.sp1r: return (input_Digital & 0b00000001) == 1
@@ -61,7 +63,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT digital" subcategory="Sensoren" deprecated=true
 
     //% group="INPUT digital" subcategory="Sensoren" deprecated=true
-    //% block="Spur Sensor %sensor %status" weight=7
+    //% block="Spur Sensor %sensor %status" weight=6
     export function get_spursensor(sensor: eSensor, status: eSensorStatus): boolean {
         switch (sensor) {
             case eSensor.rechts:
@@ -79,6 +81,17 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
+    //% group="INPUT digital" subcategory="Sensoren"
+    //% block="fahre bis Spur gefunden" weight=5
+    export function wait_spursensor() {
+        while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
+            read_inputs()
+            if ((input_Digital & 0b00000011) == 0)
+                write_motor(eMotor.beide, 0, eDirection.v) // setzt q_pwm1 und q_pwm2 auf 0
+            else
+                basic.pause(200) // ms
+        }
+    }
 
 
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
@@ -132,13 +145,13 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     //% zentimeter.min=1 zentimeter.max=100 zentimeter.defl=20
     export function encoder_wait_cm(zentimeter: number) {
         encoder_reset(eMotor.beide)
-        while (q_pwm1 > 0 || q_pwm2 > 0) {
+        while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
             let values = encoder_values()
             if (Math.abs(values[0]) >= zentimeter * impulse_cm) {
-                write_motor(eMotor.m1, 0, eDirection.v) // setzt pwm1 auf 0
+                write_motor(eMotor.m1, 0, eDirection.v) // setzt q_pwm1 auf 0
             }
             if (Math.abs(values[1]) >= zentimeter * impulse_cm) {
-                write_motor(eMotor.m2, 0, eDirection.v) // setzt pwm2 auf 0
+                write_motor(eMotor.m2, 0, eDirection.v) // setzt q_pwm2 auf 0
             }
         }
     }
@@ -149,13 +162,13 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     //% grad.min=15 grad.max=360 grad.defl=90
     export function encoder_wait_grad(grad: number) {
         encoder_reset(eMotor.beide)
-        while (q_pwm1 > 0 || q_pwm2 > 0) {
+        while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
             let values = encoder_values()
             if (Math.abs(values[0]) >= grad * impulse_grad) {
-                write_motor(eMotor.m1, 0, eDirection.v) // setzt pwm1 auf 0
+                write_motor(eMotor.m1, 0, eDirection.v) // setzt q_pwm1 auf 0
             }
             if (Math.abs(values[1]) >= grad * impulse_grad) {
-                write_motor(eMotor.m2, 0, eDirection.v) // setzt pwm2 auf 0
+                write_motor(eMotor.m2, 0, eDirection.v) // setzt q_pwm2 auf 0
             }
         }
     }

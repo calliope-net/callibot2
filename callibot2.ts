@@ -10,9 +10,9 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     let q_i2c_callibot_connected: boolean // undefined
     let q_leds = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
 
-    export let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
+    let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
     export let q_pwm1 = 0
-    export let q_richtung2 = eDirection.v // 2 rechter Motor
+    let q_richtung2 = eDirection.v // 2 rechter Motor
     export let q_pwm2 = 0
 
 
@@ -32,6 +32,8 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     //% block="Reset (alles aus: Motoren, LEDs)" weight=1
     export function reset_outputs() {
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
+        q_pwm1 = 0
+        q_pwm2 = 0
     }
 
 
@@ -43,11 +45,6 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     //% prozent1.shadow="speedPicker" prozent1.defl=0
     //% prozent2.shadow="speedPicker" prozent2.defl=0
     export function write_motoren_prozent(prozent1: number, prozent2: number) {
-        /*   let richtung1 = (prozent1 < 0 ? eDirection.r : eDirection.v)
-          let richtung2 = (prozent2 < 0 ? eDirection.r : eDirection.v)
-          prozent1 = Math.trunc(Math.abs(prozent1) * 255 / 100)
-          prozent2 = Math.trunc(Math.abs(prozent2) * 255 / 100) */
-
         write_motoren(
             Math.trunc(Math.abs(prozent1) * 255 / 100),
             (prozent1 < 0 ? eDirection.r : eDirection.v),
@@ -60,24 +57,11 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     //% block="Motor %motor %prozent \\%" weight=7
     //% prozent.shadow="speedPicker" prozent.defl=0
     export function write_motor_prozent(motor: eMotor, prozent: number) {
-        /*  let richtung = (pwm < 0 ? eDirection.r : eDirection.v)
-         pwm = Math.trunc(Math.abs(pwm) * 255 / 100) */
-
         write_motor(
             motor,
             Math.trunc(Math.abs(prozent) * 255 / 100),
             (prozent < 0 ? eDirection.r : eDirection.v)
         )
-
-        /*  if (!between(pwm, 0, 255)) { // falscher Parameter -> beide Stop
-             pMotor = eMotor.beide
-             pwm = 0
-         }
- 
-         if (pMotor == eMotor.beide)
-             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm, richtung, pwm]))
-         else
-             i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, pMotor, richtung, pwm])) */
     }
 
 
