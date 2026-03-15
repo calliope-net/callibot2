@@ -144,6 +144,23 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
 
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder drehe %grad °" weight=2
+    //% grad.min=15 grad.max=360 grad.defl=90
+    export function encoder_wait_grad(grad: number) {
+        encoder_reset(eMotor.beide)
+        while (q_pwm1 > 0 || q_pwm2 > 0) {
+            let values = encoder_values()
+            if (Math.abs(values[0]) >= grad * impulse_grad) {
+                write_motor(eMotor.m1, 0, eDirection.v) // setzt pwm1 auf 0
+            }
+            if (Math.abs(values[1]) >= grad * impulse_grad) {
+                write_motor(eMotor.m2, 0, eDirection.v) // setzt pwm2 auf 0
+            }
+        }
+    }
+
+
 
     // ========== group="I²C Register lesen" advanced=true
 
