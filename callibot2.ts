@@ -207,7 +207,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     export function i2cWriteReadBuffer(bu: Buffer, size: number) {
         let read_buffer: Buffer
         if (q_i2c_callibot_connected !== false) // undefined oder true
-            if (pins.i2cWriteBuffer(q_i2c_callibot_x22, bu, true) == 0) {
+            if (pins.i2cWriteBuffer(q_i2c_callibot_x22, bu, false) == 0) { // callibot verträgt kein repeat
                 read_buffer = pins.i2cReadBuffer(q_i2c_callibot_x22, size)
                 if (read_buffer)
                     q_i2c_callibot_connected = true

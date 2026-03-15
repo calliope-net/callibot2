@@ -166,7 +166,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     //% group="I²C Register lesen" advanced=true
     //% block="Version %version (HEX)" weight=6
-    export function i2c_read_fw(version: eVersion) {
+    export function read_fw(version: eVersion): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
         if (bu)
             switch (version) {
@@ -176,12 +176,12 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
                 default: { return bu.toHex() }
             }
         else
-            return 0
+            return ""
     }
 
     //% group="I²C Register lesen" advanced=true
     //% block="Versorgungsspannung (V)" weight=4
-    export function i2c_read_power(): number {
+    export function read_power(): number {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
         if (bu)
             //return bu.getNumber(NumberFormat.UInt16LE, 1)
