@@ -190,7 +190,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
                 default: return bu.getUint8(1).toString()
             }
         else
-            return ""
+            return "|"
     }
 
     //% group="I²C Register lesen" advanced=true

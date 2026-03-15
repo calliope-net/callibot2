@@ -24,7 +24,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         if (q_i2c_callibot_connected)
             return true
         else if (q_i2c_callibot_connected === undefined) // nicht false
-            read_inputs() // testet i2cWriteReadBuffer
+            read_typ() // testet i2cWriteReadBuffer
         return q_i2c_callibot_connected
     }
 
