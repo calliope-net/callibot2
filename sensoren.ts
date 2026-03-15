@@ -82,7 +82,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="INPUT digital" subcategory="Sensoren"
-    //% block="fahre bis Spur gefunden" weight=5
+    //% block="fahre weiter bis Spur gefunden" weight=5
     export function wait_spursensor() {
         while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
             read_inputs()
@@ -97,7 +97,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
 
     //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Entfernung %vergleich %cm cm" weight=6
+    //% block="Abstand %vergleich %cm cm" weight=6
     //% cm.min=1 cm.max=50 cm.defl=15
     export function read_compare_us(vergleich: eVergleich, cm: number) {
         switch (vergleich) {
