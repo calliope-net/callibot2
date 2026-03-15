@@ -115,7 +115,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     export function encoder_value(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
         if (bu)
-            return bu.slice(1, 8).toArray(NumberFormat.Int32LE)
+            return bu.slice(1, 8).toArray(NumberFormat.Int32LE) // 32 Bit mit Vorzeichen
         else
             return [0, 0]
     }
@@ -147,11 +147,12 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Versorgungsspannung (mV)" weight=4
+    //% block="Versorgungsspannung (V)" weight=4
     export function i2c_read_power(): number {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
         if (bu)
-            return bu.getNumber(NumberFormat.UInt16LE, 1)
+            //return bu.getNumber(NumberFormat.UInt16LE, 1)
+            return Math.roundWithPrecision(bu.getNumber(NumberFormat.UInt16LE, 1) / 1000, 1) // Volt mit 1 Kommastelle
         else
             return 0
     }
