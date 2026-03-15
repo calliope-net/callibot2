@@ -180,6 +180,20 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
+    //% block="Calli:bot Typ" weight=5
+    export function read_typ(): string {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 2)
+        if (bu)
+            switch (bu.getUint8(1)) {
+                case 3: return "E"
+                case 4: return "A"
+                default: return bu.getUint8(1).toString()
+            }
+        else
+            return ""
+    }
+
+    //% group="I²C Register lesen" advanced=true
     //% block="Versorgungsspannung (V)" weight=4
     export function read_power(): number {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
