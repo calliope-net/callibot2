@@ -36,8 +36,6 @@ PWM rechts (0..255) von Motor 2
         m2 = 0b10
     }
 
-    /* export enum eRL { rechts = 0, links = 1 } // Index im Array */
-
     export enum eDirection {
         //% block="vorwärts"
         v = 0,
@@ -76,15 +74,6 @@ PWM rechts (0..255) von Motor 2
     export enum eSensor { links, rechts }
 
     export enum eSensorStatus { hell, dunkel }
-
-    /* export enum eState { aus, an } */
-
-    /* export enum eTaster {
-        //% block="Ein-Taster"
-        ont,
-        //% block="Aus-Taster"
-        offt
-    } */
 
     export enum eINPUTS {
         //% block="Spursensor rechts hell"
