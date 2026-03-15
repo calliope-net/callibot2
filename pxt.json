@@ -8,9 +8,9 @@
         "main.blocks",
         "main.ts",
         "README.md",
+        "sensoren.ts",
         "callibot2.ts",
-        "enums.ts",
-        "sensoren.ts"
+        "enums.ts"
     ],
     "testFiles": [
         "test.ts"
