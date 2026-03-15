@@ -106,7 +106,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
 
     //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder Array 2*32 Bit [l,r]" weight=6
+    //% block="Encoder Array 2* ±31 Bit [l,r]" weight=6
     export function encoder_value(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
         if (bu)
