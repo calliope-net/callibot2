@@ -1,5 +1,26 @@
 // Gib deinen Code hier ein
 namespace callibot2 // sensoren.ts
+/*
+Ich habe eine Antwort von Knotech bekommen:
+
+es ist ein Calli:bot 2E,
+wenn von I²C Adresse 0x22, Register 0x82, offset [1] Typ: 3 gelesen wird
+
+Encoder Daten:
+3 Impulse pro Umdrehung der Motorwelle
+150:1 Getriebe
+450 Impulse pro Umdrehung des Rades
+45,50 mm Rad Durchmesser
+142,94 mm Rad Umfang
+31,48 Impulse pro cm Fahrstrecke
+
+8 cm * Pi eine volle Drehung = 25,13 cm
+791,2 Impulse pro volle Drehung
+197,8 Impulse pro viertel 90° Drehung
+wenn beide Räder gleich schnell in entgegengesetzte Richtung drehen
+pro Rad getrennte Encoder
+beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
+*/
 {
     // interner Speicher für Sensoren
     let input_Digital: number = 0
