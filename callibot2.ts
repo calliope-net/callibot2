@@ -2,6 +2,9 @@
 namespace callibot2 // callibot2.ts
 /*
 https://shop.knotech.de/calli-bot/244/calli-bot-2
+
+https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Software-Infos.pdf
+
 */ {
     const q_i2c_callibot_x22 = 0x22
     let q_i2c_callibot_connected: boolean // undefined
