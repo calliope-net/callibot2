@@ -111,8 +111,8 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
 
     //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder Array 2* ±31 Bit [l,r]" weight=6
-    export function encoder_value(): number[] {
+    //% block="Encoder Array [l,r] ±31 Bit" weight=6
+    export function encoder_values(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
         if (bu)
             return bu.slice(1, 8).toArray(NumberFormat.Int32LE) // 32 Bit mit Vorzeichen
@@ -125,6 +125,22 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     //% encoder.defl=callibot2.eMotor.beide
     export function encoder_reset(encoder: eMotor) {
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
+    }
+
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder fahre %zentimeter cm" weight=3
+    //% zentimeter.min=1 zentimeter.max=100 zentimeter.defl=20
+    export function encoder_wait_cm(zentimeter: number) {
+        encoder_reset(eMotor.beide)
+        while (q_pwm1 > 0 || q_pwm2 > 0) {
+            let values = encoder_values()
+            if (Math.abs(values[0]) >= zentimeter * impulse_cm) {
+                write_motor(eMotor.m1, 0, eDirection.v) // setzt pwm1 auf 0
+            }
+            if (Math.abs(values[1]) >= zentimeter * impulse_cm) {
+                write_motor(eMotor.m2, 0, eDirection.v) // setzt pwm2 auf 0
+            }
+        }
     }
 
 

@@ -7,10 +7,10 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
     let q_i2c_callibot_connected: boolean // undefined
     let q_leds = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
 
-    let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
-    let q_pwm1 = 0
-    let q_richtung2 = eDirection.v // 2 rechter Motor
-    let q_pwm2 = 0
+    export let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
+    export let q_pwm1 = 0
+    export let q_richtung2 = eDirection.v // 2 rechter Motor
+    export let q_pwm2 = 0
 
 
     // ========== group="I²C 0x22" 
