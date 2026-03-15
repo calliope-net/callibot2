@@ -64,6 +64,16 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         )
     }
 
+    //% group="Motoren (-100% .. 0 .. +100%)"
+    //% block="fahre %sekunden Sekunden" weight=6
+    //% sekunden.shadow=callibot2_ePause
+    export function wait_motor(sekunden: number) {
+        if (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
+            basic.pause(sekunden * 1000)
+            write_motor(eMotor.beide, 0, eDirection.v) // setzt q_pwm1 und q_pwm2 auf 0
+        }
+    }
+
 
     // ========== group="Motoren (0 .. 128 .. 255)" advanced=true
 

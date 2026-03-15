@@ -28,15 +28,15 @@ PWM rechts (0..255) von Motor 2
 
 
     export enum eMotor {
+        //% block="beide"
+        beide = 0b11,
         //% block="links"
         m1 = 0b01,
         //% block="rechts"
-        m2 = 0b10,
-        //% block="beide"
-        beide = 0b11
+        m2 = 0b10
     }
 
-    export enum eRL { rechts = 0, links = 1 } // Index im Array
+    /* export enum eRL { rechts = 0, links = 1 } // Index im Array */
 
     export enum eDirection {
         //% block="vorwärts"
@@ -77,14 +77,14 @@ PWM rechts (0..255) von Motor 2
 
     export enum eSensorStatus { hell, dunkel }
 
-    export enum eState { aus, an }
+    /* export enum eState { aus, an } */
 
-    export enum eTaster {
+    /* export enum eTaster {
         //% block="Ein-Taster"
         ont,
         //% block="Aus-Taster"
         offt
-    }
+    } */
 
     export enum eINPUTS {
         //% block="Spursensor rechts hell"
@@ -102,14 +102,43 @@ PWM rechts (0..255) von Motor 2
     }
 
     export enum eVergleich {
-        //% block=">"
-        gt,
         //% block="<"
-        lt
+        lt,
+        //% block=">"
+        gt
     }
 
     export enum eVersion { Typ, Firmware, Seriennummer }
 
+
+    export enum ePause {
+        //% block="0.5"
+        p05 = 5,
+        //% block="1"
+        p1 = 10,
+        //% block="2"
+        p2 = 20,
+        //% block="3"
+        p3 = 30,
+        //% block="4"
+        p4 = 40,
+        //% block="5"
+        p5 = 50,
+        //% block="10"
+        p10 = 100,
+        //% block="15"
+        p15 = 150,
+        //% block="20"
+        p20 = 200,
+        //% block="30"
+        p30 = 300,
+        //% block="45"
+        p45 = 450,
+        //% block="60"
+        p60 = 600
+    }
+    //% blockId=callibot2_ePause block="%pPause" blockHidden=true
+    export function callibot2_ePause(pause: ePause): number { return pause / 10 }
 
 
     //% blockId=callibot2_colorPicker block="%value"

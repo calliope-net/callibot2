@@ -97,7 +97,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
 
     //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Entfernung %vergleich %cm cm" weight=4
+    //% block="Entfernung %vergleich %cm cm" weight=6
     //% cm.min=1 cm.max=50 cm.defl=15
     export function read_compare_us(vergleich: eVergleich, cm: number) {
         switch (vergleich) {
@@ -106,6 +106,18 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             default: return false
         }
     }
+
+    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
+    //% block="fahre bis Abstand < %zentimeter cm" weight=4
+    //% zentimeter.min=5 zentimeter.max=50 zentimeter.defl=15
+    export function wait_us(zentimeter: number) {
+        while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
+            if (read_us() / 10 < zentimeter) {
+                write_motor(eMotor.beide, 0, eDirection.v) // setzt q_pwm1 und q_pwm2 auf 0
+            }
+        }
+    }
+
 
     // ========== group="INPUT Ultraschallsensor" advanced=true
 
