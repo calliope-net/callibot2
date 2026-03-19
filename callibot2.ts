@@ -19,6 +19,14 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     // ========== group="I²C 0x22" 
 
     //% group="I²C 0x22" 
+    //% block="Reset (alles aus: Motoren, LEDs)" weight=5
+    export function reset_outputs() {
+        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
+        q_pwm1 = 0
+        q_pwm2 = 0
+    }
+
+    //% group="I²C 0x22" 
     //% block="Calli:bot 2 angeschlossen ?" weight=3
     export function is_connected() {
         if (q_i2c_callibot_connected)
@@ -26,14 +34,6 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         else if (q_i2c_callibot_connected === undefined) // nicht false
             read_typ() // testet i2cWriteReadBuffer
         return q_i2c_callibot_connected
-    }
-
-    //% group="I²C 0x22" 
-    //% block="Reset (alles aus: Motoren, LEDs)" weight=1
-    export function reset_outputs() {
-        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
-        q_pwm1 = 0
-        q_pwm2 = 0
     }
 
 
@@ -75,9 +75,9 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     }
 
 
-    // ========== group="Motoren (0 .. 128 .. 255)" advanced=true
+    // ========== group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
 
-    //% group="Motoren (0 .. 128 .. 255)" advanced=true
+    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
     //% block="Motor %eMotor %pwm %richtung" weight=3
     //% pwm.min=0 pwm.max=255 pwm.defl=128
     //% inlineInputMode=inline
@@ -102,7 +102,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
             write_motoren(0, eDirection.v, 0, eDirection.v)
     }
 
-    //% group="Motoren (0 .. 128 .. 255)" advanced=true
+    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
     //% block="Motoren links %pwm1 %richtung1 rechts %pwm2 %richtung2" weight=2
     //% pwm1.min=0 pwm1.max=255 pwm1.defl=128 pwm2.min=0 pwm2.max=255 pwm2.defl=128
     //% inlineInputMode=inline

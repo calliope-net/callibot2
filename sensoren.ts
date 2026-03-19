@@ -93,6 +93,34 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
+    //% group="INPUT digital" subcategory="Sensoren"
+    //% block="fahre weiter bis Stoßstange" weight=4
+    export function wait_stossstange() {
+        while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
+            read_inputs()
+            if ((input_Digital & 0b00001100) != 0)
+                write_motor(eMotor.beide, 0, eDirection.v) // setzt q_pwm1 und q_pwm2 auf 0
+            else
+                basic.pause(200) // ms
+        }
+    }
+
+
+
+    // ========== group="INPUT analog" advanced=true
+
+    //% group="INPUT analog" advanced=true
+    //% block="Spursensor Array [l,r] UInt16" weight=4
+    export function read_spursensor_analog(): number[] {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_LINE_SEN_VALUE]), 5)
+        if (bu)
+            return bu.slice(1, 4).toArray(NumberFormat.UInt16LE)
+        else
+            return [0, 0]
+    }
+
+
+
 
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
 
@@ -119,9 +147,9 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
 
-    // ========== group="INPUT Ultraschallsensor" advanced=true
+    // ========== group="INPUT analog" advanced=true
 
-    //% group="INPUT Ultraschallsensor" advanced=true
+    //% group="INPUT analog" advanced=true
     //% block="Ultraschallsensor 16 Bit (mm)" weight=3
     export function read_us() {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUT_US]), 3)
@@ -190,22 +218,17 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="I²C Register lesen" advanced=true
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Version %version (HEX)" weight=6
-    export function read_fw(version: eVersion): string {
-        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
+    //% block="Versorgungsspannung (V)" weight=4
+    export function read_power(): number {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
         if (bu)
-            switch (version) {
-                case eVersion.Typ: { return bu.slice(1, 1).toHex() }
-                case eVersion.Firmware: { return bu.slice(2, 4).toHex() }
-                case eVersion.Seriennummer: { return bu.slice(6, 4).toHex() }
-                default: { return bu.toHex() }
-            }
+            return Math.roundWithPrecision(bu.getNumber(NumberFormat.UInt16LE, 1) / 1000, 1) // Volt mit 1 Kommastelle
         else
-            return ""
+            return 0
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Calli:bot Typ" weight=5
+    //% block="Calli:bot Typ" weight=7
     export function read_typ(): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 2)
         if (bu)
@@ -219,14 +242,18 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Versorgungsspannung (V)" weight=4
-    export function read_power(): number {
-        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
+    //% block="Version %version (HEX)" weight=6
+    export function read_fw(version: eVersion): string {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
         if (bu)
-            //return bu.getNumber(NumberFormat.UInt16LE, 1)
-            return Math.roundWithPrecision(bu.getNumber(NumberFormat.UInt16LE, 1) / 1000, 1) // Volt mit 1 Kommastelle
+            switch (version) {
+                case eVersion.Typ: { return bu.slice(1, 1).toHex() }
+                case eVersion.Firmware: { return bu.slice(2, 4).toHex() }
+                case eVersion.Seriennummer: { return bu.slice(6, 4).toHex() }
+                default: { return bu.toHex() }
+            }
         else
-            return 0
+            return ""
     }
 
     //% group="I²C Register lesen" advanced=true
