@@ -34,7 +34,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="INPUT digital" subcategory="Sensoren"
 
-    //% group="INPUT digital" subcategory="Sensoren"
+    //% group="INPUT digital" subcategory="Sensoren" blockGap=8
     //% block="Digitaleingänge neu einlesen" weight=8
     export function read_inputs() {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUTS]), 1)
@@ -44,7 +44,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             input_Digital = 0
     }
 
-    //% group="INPUT digital" subcategory="Sensoren"
+    //% group="INPUT digital" subcategory="Sensoren" blockGap=8
     //% block="%inputs" weight=7
     export function get_inputs(inputs: eINPUTS): boolean {
         switch (inputs) {
@@ -60,7 +60,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="INPUT digital" subcategory="Sensoren" deprecated=true
 
-    //% group="INPUT digital" subcategory="Sensoren" deprecated=true
+    //% group="INPUT digital" subcategory="Sensoren" deprecated=true blockGap=8
     //% block="Spur Sensor %sensor %status" weight=6
     export function get_spursensor(sensor: eSensor, status: eSensorStatus): boolean {
         switch (sensor) {
@@ -79,7 +79,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-    //% group="INPUT digital" subcategory="Sensoren"
+    //% group="INPUT digital" subcategory="Sensoren" blockGap=8
     //% block="fahre weiter bis Spur gefunden" weight=5
     export function wait_spursensor() {
         while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
@@ -91,7 +91,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-    //% group="INPUT digital" subcategory="Sensoren"
+    //% group="INPUT digital" subcategory="Sensoren" blockGap=8
     //% block="fahre weiter bis Stoßstange" weight=4
     export function wait_stossstange() {
         while (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich
@@ -107,7 +107,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="INPUT analog" advanced=true
 
-    //% group="INPUT analog" advanced=true
+    //% group="INPUT analog" advanced=true blockGap=8
     //% block="Spursensor Array [l,r] :UInt16[]" weight=4
     export function read_spursensor_analog(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_LINE_SEN_VALUE]), 5)
@@ -122,7 +122,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
 
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
+    //% group="INPUT Ultraschallsensor" subcategory="Sensoren" blockGap=8
     //% block="fahre bis Abstand < %zentimeter cm" weight=4
     //% zentimeter.min=5 zentimeter.max=50 zentimeter.defl=15
     export function wait_us(zentimeter: number) {
@@ -133,7 +133,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
+    //% group="INPUT Ultraschallsensor" subcategory="Sensoren" blockGap=8
     //% block="Abstand %vergleich %cm cm" weight=2
     //% cm.min=1 cm.max=50 cm.defl=15
     export function read_compare_us(vergleich: eVergleich, cm: number) {
@@ -148,7 +148,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="INPUT analog" advanced=true
 
-    //% group="INPUT analog" advanced=true
+    //% group="INPUT analog" advanced=true blockGap=8
     //% block="Ultraschallsensor (mm) :UInt16" weight=3
     export function read_us() {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUT_US]), 3)
@@ -162,7 +162,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
 
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren" blockGap=8
     //% block="Encoder fahre %zentimeter cm" weight=8
     //% zentimeter.min=1 zentimeter.max=100 zentimeter.defl=20
     export function encoder_wait_cm(zentimeter: number) {
@@ -178,7 +178,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren" blockGap=8
     //% block="Encoder drehe %grad °" weight=6
     //% grad.min=15 grad.max=360 grad.defl=90
     export function encoder_wait_grad(grad: number) {
@@ -194,14 +194,14 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren" blockGap=8
     //% block="Encoder Zähler löschen %encoder" weight=4
     //% encoder.defl=callibot2.eMotor.beide
     export function encoder_reset(encoder: eMotor) {
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
     }
 
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren" blockGap=8
     //% block="Encoder Array [l,r] ±31 Bit" weight=2
     export function encoder_values(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
@@ -215,7 +215,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // ========== group="I²C Register lesen" advanced=true
 
-    //% group="I²C Register lesen" advanced=true
+    //% group="I²C Register lesen" advanced=true blockGap=8
     //% block="Versorgungsspannung (V)" weight=8
     export function read_power(): number {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
@@ -225,7 +225,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             return 0
     }
 
-    //% group="I²C Register lesen" advanced=true
+    //% group="I²C Register lesen" advanced=true blockGap=8
     //% block="Calli:bot Typ :string" weight=7
     export function read_typ(): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 2)
@@ -239,7 +239,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             return "|"
     }
 
-    //% group="I²C Register lesen" advanced=true
+    //% group="I²C Register lesen" advanced=true blockGap=8
     //% block="Version %version :Hex" weight=6
     export function read_fw(version: eVersion): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
@@ -254,7 +254,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             return ""
     }
 
-    //% group="I²C Register lesen" advanced=true
+    //% group="I²C Register lesen" advanced=true blockGap=8
     //% block="I²C Register lesen %register size %size :Buffer" weight=2
     //% register.defl=callibot2.eRegister.GET_INPUTS
     //% size.min=1 size.max=10 size.defl=1

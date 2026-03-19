@@ -18,7 +18,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
 
     // ========== group="I²C 0x22" 
 
-    //% group="I²C 0x22" 
+    //% group="I²C 0x22" blockGap=8
     //% block="Reset (alles aus: Motoren, LEDs)" weight=5
     export function reset_outputs() {
         i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_OUTPUTS]))
@@ -26,7 +26,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         q_pwm2 = 0
     }
 
-    //% group="I²C 0x22" 
+    //% group="I²C 0x22" blockGap=8
     //% block="Calli:bot 2 angeschlossen ?" weight=3
     export function is_connected() {
         if (q_i2c_callibot_connected)
@@ -40,7 +40,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
 
     // ========== group="Motoren (-100% .. 0 .. +100%)"
 
-    //% group="Motoren (-100% .. 0 .. +100%)"
+    //% group="Motoren (-100% .. 0 .. +100%)" blockGap=8
     //% block="Motor %motor %prozent \\%" weight=9
     //% prozent.shadow="speedPicker" prozent.defl=0
     export function write_motor_prozent(motor: eMotor, prozent: number) {
@@ -51,7 +51,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         )
     }
 
-    //% group="Motoren (-100% .. 0 .. +100%)"
+    //% group="Motoren (-100% .. 0 .. +100%)" blockGap=8
     //% block="Motoren links %prozent1 \\% rechts %prozent2 \\%" weight=8
     //% prozent1.shadow="speedPicker" prozent1.defl=50
     //% prozent2.shadow="speedPicker" prozent2.defl=50
@@ -64,7 +64,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         )
     }
 
-    //% group="Motoren (-100% .. 0 .. +100%)"
+    //% group="Motoren (-100% .. 0 .. +100%)" blockGap=8
     //% block="fahre weiter %sekunden Sekunden" weight=6
     //% sekunden.shadow=callibot2_ePause
     export function wait_motor(sekunden: number) {
@@ -77,7 +77,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
 
     // ========== group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
 
-    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
+    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true blockGap=8
     //% block="Motor %eMotor %pwm %richtung" weight=3
     //% pwm.min=0 pwm.max=255 pwm.defl=128
     //% inlineInputMode=inline
@@ -102,7 +102,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
             write_motoren(0, eDirection.v, 0, eDirection.v)
     }
 
-    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
+    //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true blockGap=8
     //% block="Motoren links %pwm1 %richtung1 rechts %pwm2 %richtung2" weight=2
     //% pwm1.min=0 pwm1.max=255 pwm1.defl=128 pwm2.min=0 pwm2.max=255 pwm2.defl=128
     //% inlineInputMode=inline
@@ -123,7 +123,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
 
     // ========== group="LED"
 
-    //% group="LED"
+    //% group="LED" blockGap=8
     //% block="4 RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7
     //% color.shadow="callibot2_colorPicker"
     //% lv.shadow="toggleOnOff" lh.shadow="toggleOnOff" rh.shadow="toggleOnOff" rv.shadow="toggleOnOff"
@@ -157,7 +157,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     }
 
 
-    //% group="LED"
+    //% group="LED" blockGap=8
     //% block="LED %led %on || blinken %blink Helligkeit %pwm" weight=2
     //% on.shadow="toggleOnOff"
     //% blink.shadow="toggleYesNo"
@@ -185,7 +185,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
 
     // ========== group="Kommentar"
 
-    //% group="Kommentar"
+    //% group="Kommentar" blockGap=8
     //% block="// %text"
     export function comment(text: string): void { }
 
