@@ -5,12 +5,13 @@ https://shop.knotech.de/calli-bot/244/calli-bot-2
 
 https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Software-Infos.pdf
 
+Lutz Elßner März 2026
 */ {
     const q_i2c_callibot_x22 = 0x22
     let q_i2c_callibot_connected: boolean // undefined
     let q_leds = [0, 0, 0, 0, 0, 0, 0, 0, 0] // LED Wert in Register 0x03 merken zum blinken
 
-    let q_richtung1 = eDirection.v // 1 linker Motor; 3 beide
+    let q_richtung1 = eDirection.v // 1 linker Motor
     export let q_pwm1 = 0
     let q_richtung2 = eDirection.v // 2 rechter Motor
     export let q_pwm2 = 0
@@ -75,6 +76,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     }
 
 
+
     // ========== group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true
 
     //% group="I²C Register Motoren (0 .. 128 .. 255)" advanced=true blockGap=8
@@ -114,7 +116,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
                 q_richtung2 = richtung2
                 q_pwm2 = pwm2
                 i2cWriteBuffer(Buffer.fromArray([eRegister.SET_MOTOR, eMotor.beide, richtung1, pwm1, richtung2, pwm2]))
-            } //else { }
+            }
         } else // falscher Parameter -> beide Stop
             write_motoren(0, eDirection.v, 0, eDirection.v)
     }
@@ -131,7 +133,6 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     //% blink.shadow="toggleYesNo"
     //% inlineInputMode=inline expandableArgumentMode="toggle"
     export function write_rgbled(color: number, lv = true, lh = true, rh = true, rv = true, blink = false) {
-        //basic.showString(lv.toString())
         let buffer = Buffer.create(5)
         buffer[0] = eRegister.SET_LED
         buffer.setNumber(NumberFormat.UInt32BE, 1, color) // [1]=0 [2]=r [3]=g [4]=b
@@ -139,10 +140,10 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
         buffer[3] = buffer[3] >>> 4
         buffer[4] = buffer[4] >>> 4
 
-        if (lv) write_rgbled1(eRgbLed.LV, buffer, blink)
-        if (lh) write_rgbled1(eRgbLed.LH, buffer, blink)
-        if (rh) write_rgbled1(eRgbLed.RH, buffer, blink)
-        if (rv) write_rgbled1(eRgbLed.RV, buffer, blink)
+        if (lv) write_rgbled1(eRgbLed.lv, buffer, blink)
+        if (lh) write_rgbled1(eRgbLed.lh, buffer, blink)
+        if (rh) write_rgbled1(eRgbLed.rh, buffer, blink)
+        if (rv) write_rgbled1(eRgbLed.rv, buffer, blink)
     }
 
 

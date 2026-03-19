@@ -60,15 +60,15 @@ PWM rechts (0..255) von Motor 2
 
     export enum eRgbLed {
         //% block="alle (4)"
-        All = 0,
+        all = 0,
         //% block="links vorne"
-        LV = 1,
+        lv = 1,
         //% block="links hinten"
-        LH = 2,
+        lh = 2,
         //% block="rechts hinten"
-        RH = 3,
+        rh = 3,
         //% block="rechts vorne"
-        RV = 4
+        rv = 4
     }
 
     export enum eSensor { links, rechts }
