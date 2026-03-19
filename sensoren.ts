@@ -29,9 +29,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // interner Speicher für Sensoren
     let input_Digital: number = 0
-    //let input_Ultraschallsensor: number = 0
-    // let input_Spursensoren: number[] / analog
-
+ 
 
 
     // ========== group="INPUT digital" subcategory="Sensoren"
