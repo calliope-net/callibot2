@@ -41,20 +41,7 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     // ========== group="Motoren (-100% .. 0 .. +100%)"
 
     //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="Motoren links %prozent1 \\% rechts %prozent2 \\%" weight=8
-    //% prozent1.shadow="speedPicker" prozent1.defl=0
-    //% prozent2.shadow="speedPicker" prozent2.defl=0
-    export function write_motoren_prozent(prozent1: number, prozent2: number) {
-        write_motoren(
-            Math.trunc(Math.abs(prozent1) * 255 / 100),
-            (prozent1 < 0 ? eDirection.r : eDirection.v),
-            Math.trunc(Math.abs(prozent2) * 255 / 100),
-            (prozent2 < 0 ? eDirection.r : eDirection.v)
-        )
-    }
-
-    //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="Motor %motor %prozent \\%" weight=7
+    //% block="Motor %motor %prozent \\%" weight=9
     //% prozent.shadow="speedPicker" prozent.defl=0
     export function write_motor_prozent(motor: eMotor, prozent: number) {
         write_motor(
@@ -65,7 +52,20 @@ https://github.com/calliope-net/callibot/blob/master/2021-11-12a_Callibot2_Softw
     }
 
     //% group="Motoren (-100% .. 0 .. +100%)"
-    //% block="fahre %sekunden Sekunden" weight=6
+    //% block="Motoren links %prozent1 \\% rechts %prozent2 \\%" weight=8
+    //% prozent1.shadow="speedPicker" prozent1.defl=50
+    //% prozent2.shadow="speedPicker" prozent2.defl=50
+    export function write_motoren_prozent(prozent1: number, prozent2: number) {
+        write_motoren(
+            Math.trunc(Math.abs(prozent1) * 255 / 100),
+            (prozent1 < 0 ? eDirection.r : eDirection.v),
+            Math.trunc(Math.abs(prozent2) * 255 / 100),
+            (prozent2 < 0 ? eDirection.r : eDirection.v)
+        )
+    }
+
+    //% group="Motoren (-100% .. 0 .. +100%)"
+    //% block="fahre weiter %sekunden Sekunden" weight=6
     //% sekunden.shadow=callibot2_ePause
     export function wait_motor(sekunden: number) {
         if (q_pwm1 > 0 || q_pwm2 > 0) { // mindestens 1 Motor dreht sich

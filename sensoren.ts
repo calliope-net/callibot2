@@ -125,17 +125,6 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT Ultraschallsensor" subcategory="Sensoren"
 
     //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
-    //% block="Abstand %vergleich %cm cm" weight=6
-    //% cm.min=1 cm.max=50 cm.defl=15
-    export function read_compare_us(vergleich: eVergleich, cm: number) {
-        switch (vergleich) {
-            case eVergleich.gt: return read_us() / 10 > cm
-            case eVergleich.lt: return read_us() / 10 < cm
-            default: return false
-        }
-    }
-
-    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
     //% block="fahre bis Abstand < %zentimeter cm" weight=4
     //% zentimeter.min=5 zentimeter.max=50 zentimeter.defl=15
     export function wait_us(zentimeter: number) {
@@ -145,6 +134,18 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             }
         }
     }
+
+    //% group="INPUT Ultraschallsensor" subcategory="Sensoren"
+    //% block="Abstand %vergleich %cm cm" weight=2
+    //% cm.min=1 cm.max=50 cm.defl=15
+    export function read_compare_us(vergleich: eVergleich, cm: number) {
+        switch (vergleich) {
+            case eVergleich.gt: return read_us() / 10 > cm
+            case eVergleich.lt: return read_us() / 10 < cm
+            default: return false
+        }
+    }
+
 
 
     // ========== group="INPUT analog" advanced=true
@@ -164,24 +165,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
 
     //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder Array [l,r] ±31 Bit" weight=6
-    export function encoder_values(): number[] {
-        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
-        if (bu)
-            return bu.slice(1, 8).toArray(NumberFormat.Int32LE) // 32 Bit mit Vorzeichen
-        else
-            return [0, 0]
-    }
-
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder Zähler löschen %encoder" weight=4
-    //% encoder.defl=callibot2.eMotor.beide
-    export function encoder_reset(encoder: eMotor) {
-        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
-    }
-
-    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder fahre %zentimeter cm" weight=3
+    //% block="Encoder fahre %zentimeter cm" weight=8
     //% zentimeter.min=1 zentimeter.max=100 zentimeter.defl=20
     export function encoder_wait_cm(zentimeter: number) {
         encoder_reset(eMotor.beide)
@@ -196,9 +180,8 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
         }
     }
 
-
     //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
-    //% block="Encoder drehe %grad °" weight=2
+    //% block="Encoder drehe %grad °" weight=6
     //% grad.min=15 grad.max=360 grad.defl=90
     export function encoder_wait_grad(grad: number) {
         encoder_reset(eMotor.beide)
@@ -211,6 +194,23 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
                 write_motor(eMotor.m2, 0, eDirection.v) // setzt q_pwm2 auf 0
             }
         }
+    }
+
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder Zähler löschen %encoder" weight=4
+    //% encoder.defl=callibot2.eMotor.beide
+    export function encoder_reset(encoder: eMotor) {
+        i2cWriteBuffer(Buffer.fromArray([eRegister.RESET_ENCODER, encoder]))
+    }
+
+    //% group="Encoder (nur Calli:bot 2E)" subcategory="Sensoren"
+    //% block="Encoder Array [l,r] ±31 Bit" weight=2
+    export function encoder_values(): number[] {
+        let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_ENCODER_VALUE]), 9)
+        if (bu)
+            return bu.slice(1, 8).toArray(NumberFormat.Int32LE) // 32 Bit mit Vorzeichen
+        else
+            return [0, 0]
     }
 
 
