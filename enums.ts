@@ -71,8 +71,6 @@ PWM rechts (0..255) von Motor 2
         rv = 4
     }
 
-    export enum eSensor { links, rechts }
-
     export enum eSensorStatus { hell, dunkel }
 
     export enum eINPUTS {

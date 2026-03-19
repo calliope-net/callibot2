@@ -1,10 +1,8 @@
-// Gib deinen Code hier ein
+
 namespace callibot2 // sensoren.ts
 /*
-Ich habe eine Antwort von Knotech bekommen:
-
 es ist ein Calli:bot 2E,
-wenn von I²C Adresse 0x22, Register 0x82, offset [1] Typ: 3 gelesen wird
+wenn von I²C Adresse 0x22, Register 0x82, offset [1]: Typ=3 gelesen wird
 
 Encoder Daten:
 3 Impulse pro Umdrehung der Motorwelle
@@ -29,7 +27,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
 
     // interner Speicher für Sensoren
     let input_Digital: number = 0
- 
+
 
 
     // ========== group="INPUT digital" subcategory="Sensoren"
@@ -55,27 +53,6 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
             case eINPUTS.ont: return (input_Digital & 0b00010000) == 16
             case eINPUTS.off: return (input_Digital & 0b00100000) == 32
             default: return false
-        }
-    }
-
-    // ========== group="INPUT digital" subcategory="Sensoren" deprecated=true
-
-    //% group="INPUT digital" subcategory="Sensoren" deprecated=true blockGap=8
-    //% block="Spur Sensor %sensor %status" weight=6
-    export function get_spursensor(sensor: eSensor, status: eSensorStatus): boolean {
-        switch (sensor) {
-            case eSensor.rechts:
-                switch (status) {
-                    case eSensorStatus.hell: return (input_Digital & 0b00000001) != 0
-                    case eSensorStatus.dunkel: return (input_Digital & 0b00000001) == 0
-                }
-            case eSensor.links:
-                switch (status) {
-                    case eSensorStatus.hell: return (input_Digital & 0b00000010) != 0
-                    case eSensorStatus.dunkel: return (input_Digital & 0b000000010) == 0
-                }
-            default:
-                return false
         }
     }
 
