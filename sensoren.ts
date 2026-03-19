@@ -110,7 +110,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT analog" advanced=true
 
     //% group="INPUT analog" advanced=true
-    //% block="Spursensor Array [l,r] UInt16" weight=4
+    //% block="Spursensor Array [l,r] :UInt16[]" weight=4
     export function read_spursensor_analog(): number[] {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_LINE_SEN_VALUE]), 5)
         if (bu)
@@ -150,7 +150,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="INPUT analog" advanced=true
 
     //% group="INPUT analog" advanced=true
-    //% block="Ultraschallsensor 16 Bit (mm)" weight=3
+    //% block="Ultraschallsensor (mm) :UInt16" weight=3
     export function read_us() {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_INPUT_US]), 3)
         if (bu)
@@ -218,7 +218,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     // ========== group="I²C Register lesen" advanced=true
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Versorgungsspannung (V)" weight=4
+    //% block="Versorgungsspannung (V)" weight=8
     export function read_power(): number {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_POWER]), 3)
         if (bu)
@@ -228,7 +228,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Calli:bot Typ" weight=7
+    //% block="Calli:bot Typ :string" weight=7
     export function read_typ(): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 2)
         if (bu)
@@ -242,7 +242,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="Version %version (HEX)" weight=6
+    //% block="Version %version :Hex" weight=6
     export function read_fw(version: eVersion): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 10)
         if (bu)
@@ -257,7 +257,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true
-    //% block="I²C Register lesen %register size %size (Buffer)" weight=2
+    //% block="I²C Register lesen %register size %size :Buffer" weight=2
     //% register.defl=callibot2.eRegister.GET_INPUTS
     //% size.min=1 size.max=10 size.defl=1
     export function i2c_read_register(register: eRegister, size: number): Buffer {
