@@ -10,11 +10,11 @@ Encoder Daten:
 450 Impulse pro Umdrehung des Rades
 45,50 mm Rad Durchmesser
 142,94 mm Rad Umfang (45,5*Pi)
-3,148 Impulse pro mm Fahrstrecke (450/31,48)
+3,148 Impulse pro mm Fahrstrecke (450/142,94)
 
 8 cm Abstand der Räder
 80 mm * Pi eine volle Drehung = 251,32 mm
-791,208 Impulse pro volle Drehung (251,32*3,148)
+791,208 Impulse pro volle 360° Drehung (251,32*3,148)
 2,197 Impule pro 1° Grad (791,208/360)
 197,80 Impulse pro viertel 90° Drehung
 wenn beide Räder gleich schnell in entgegengesetzte Richtung drehen
@@ -203,7 +203,7 @@ beim rückwärts drehen zählt der Encoder rückwärts und Wert wird negativ
     }
 
     //% group="I²C Register lesen" advanced=true blockGap=8
-    //% block="Calli:bot Typ :string" weight=7
+    //% block="Calli:bot Typ ('E'=Encoder)" weight=7
     export function read_typ(): string {
         let bu = i2cWriteReadBuffer(Buffer.fromArray([eRegister.GET_FW_VERSION]), 2)
         if (bu)
