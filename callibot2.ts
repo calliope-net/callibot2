@@ -128,6 +128,7 @@ Lutz Elßner März 2026
     //% group="LED" blockGap=8
     //% block="4 RGB LED %color || ↖ %lv ↙ %lh ↘ %rh ↗ %rv blinken %blink" weight=7
     //% color.shadow="callibot2_colorPicker"
+    //% color.defl=0
     //% lv.shadow="toggleOnOff" lh.shadow="toggleOnOff" rh.shadow="toggleOnOff" rv.shadow="toggleOnOff"
     //% lv.defl=true lh.defl=true rh.defl=true rv.defl=true
     //% blink.shadow="toggleYesNo"
